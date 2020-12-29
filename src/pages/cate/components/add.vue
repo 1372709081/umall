@@ -59,8 +59,14 @@
 import { reqCateAdd, reqCateDetail, reqCateEdit } from "../../../utils/http";
 import { successalert, erroralert } from "../../../utils/alert";
 import path from "path";
+import {mapActions,mapGetters} from "vuex"
 export default {
-  props: ["info", "list"],
+  props: ["info"],
+  computed:{
+    ...mapGetters({
+      list:"cate/list"
+    })
+  },
   data() {
     return {
       //初始化数据
@@ -75,9 +81,12 @@ export default {
     };
   },
   methods: {
+    ...mapActions({
+      "reqList":"cate/reqList"
+    }),
     //取消，弹框消失
     cancel() {
-      if (!this.info.isshow) {
+      if (!this.info.show) {
         this.empty();
       }
       this.info.isshow = false;
@@ -118,7 +127,7 @@ export default {
           //清空数据
           this.empty();
           //刷新列表
-          this.$emit("init");
+          this.reqList()
         }
       });
     },
@@ -143,7 +152,7 @@ export default {
           //清空数据
           this.empty();
           //刷新列表
-          this.$emit("init");
+          this.reqList()
         }
       });
     },

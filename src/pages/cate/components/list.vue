@@ -12,7 +12,11 @@
       <el-table-column prop="catename" label="分类名称"></el-table-column>
       <el-table-column prop="icon" label="图片">
         <template slot-scope="scope">
-          <img v-if="scope.row.img!=='null'" :src="$pre+scope.row.img" alt="">
+          <img
+            v-if="scope.row.img !== 'null'"
+            :src="$pre + scope.row.img"
+            alt=""
+          />
         </template>
       </el-table-column>
       <el-table-column prop="name" label="状态">
@@ -34,18 +38,26 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from "vuex";
 import { reqCateDel } from "../../../utils/http";
 import { successalert } from "../../../utils/alert";
 export default {
-  props: ["list"],
+  computed: {
+    ...mapGetters({
+      list: "cate/list",
+    }),
+  },
   methods: {
+    ...mapActions({
+      reqList: "cate/reqList",
+    }),
     del(id) {
       reqCateDel({ id }).then((res) => {
         if (res.data.code === 200) {
           //弹框
           successalert(res.data.msg);
           //刷新list
-          this.$emit("init");
+          this.reqList()
         }
       });
     },
@@ -55,12 +67,16 @@ export default {
       this.$emit("edit", id);
     },
   },
+  mounted() {
+    //一进来就发请求
+    this.reqList();
+  },
 };
 </script>
 
 <style scoped>
-img{
-    width: 80px;
-    height: 80px;
+img {
+  width: 80px;
+  height: 80px;
 }
 </style>

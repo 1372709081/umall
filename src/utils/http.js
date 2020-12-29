@@ -17,6 +17,13 @@ axios.interceptors.response.use(res => {
     if (!res.data.list) {
         res.data.list = []
     }
+    //掉线处理
+    if (res.data.msg === "登录已过期或访问权限受限") {
+        //清除用户登录的信息 userInfo
+        store.dispatch("changeUser", {})
+        //跳到登录页面
+        router.push("/login")
+    }
     console.group("本次请求地址是：" + res.config.url)
     console.log(res);
     console.groupEnd()
@@ -323,7 +330,7 @@ export const reqGoodsEdit = (user) => {
 }
 
 //删除
-export const reqGoodsdel = (user) => {
+export const reqGoodsDel = (user) => {
     return axios({
         url: baseUrl + "/api/goodsdelete",
         method: "post",
