@@ -8,7 +8,6 @@
       <el-form :model="user">
         <el-form-item label="上级分类" label-width="100px">
           <el-select v-model="user.pid">
-            <el-option value label="--请选择--" disabled></el-option>
             <el-option :value="0" label="顶级分类"> </el-option>
             <el-option
               v-for="item in list"
@@ -28,11 +27,7 @@
           <div class="upload">
             <h3>+</h3>
             <img v-if="imgUrl" :src="imgUrl" alt />
-            <input
-              v-if="info.isshow"
-              type="file"
-              @change="changeImg"
-            />
+            <input v-if="info.isshow" type="file" @change="changeImg" />
           </div>
         </el-form-item>
 
@@ -59,13 +54,13 @@
 import { reqCateAdd, reqCateDetail, reqCateEdit } from "../../../utils/http";
 import { successalert, erroralert } from "../../../utils/alert";
 import path from "path";
-import {mapActions,mapGetters} from "vuex"
+import { mapActions, mapGetters } from "vuex";
 export default {
   props: ["info"],
-  computed:{
+  computed: {
     ...mapGetters({
-      list:"cate/list"
-    })
+      list: "cate/list",
+    }),
   },
   data() {
     return {
@@ -82,7 +77,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      "reqList":"cate/reqList"
+      reqList: "cate/reqList",
     }),
     //取消，弹框消失
     cancel() {
@@ -117,18 +112,29 @@ export default {
       //赋值
       this.user.img = file;
     },
-    add() {
-      reqCateAdd(this.user).then((res) => {
-        if (res.data.code == 200) {
-          //弹框
-          successalert(res.data.msg);
-          //弹框消失
-          this.cancel();
-          //清空数据
-          this.empty();
-          //刷新列表
-          this.reqList()
+    checkProps() {
+      return new Promise((resolve, reject) => {
+        if (this.user.catename === "") {
+          erroralert("分类名称不能为空");
+          return;
         }
+        resolve();
+      });
+    },
+    add() {
+      this.checkProps().then(() => {
+        reqCateAdd(this.user).then((res) => {
+          if (res.data.code == 200) {
+            //弹框
+            successalert(res.data.msg);
+            //弹框消失
+            this.cancel();
+            //清空数据
+            this.empty();
+            //刷新列表
+            this.reqList();
+          }
+        });
       });
     },
     get(id) {
@@ -143,17 +149,19 @@ export default {
       });
     },
     updata() {
-      reqCateEdit(this.user).then((res) => {
-        if (res.data.code == 200) {
-          //弹框
-          successalert(res.data.msg);
-          //弹框消失
-          this.cancel();
-          //清空数据
-          this.empty();
-          //刷新列表
-          this.reqList()
-        }
+      this.checkProps().then(() => {
+        reqCateEdit(this.user).then((res) => {
+          if (res.data.code == 200) {
+            //弹框
+            successalert(res.data.msg);
+            //弹框消失
+            this.cancel();
+            //清空数据
+            this.empty();
+            //刷新列表
+            this.reqList();
+          }
+        });
       });
     },
   },

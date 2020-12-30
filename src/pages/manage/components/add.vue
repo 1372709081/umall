@@ -44,7 +44,7 @@
 
 <script>
 import { reqUserAdd, reqUserDetail, reqUserEdit } from "../../../utils/http";
-import { successalert } from "../../../utils/alert";
+import { erroralert, successalert } from "../../../utils/alert";
 export default {
   props: ["info", "List", "idArr"],
   data() {
@@ -75,18 +75,37 @@ export default {
         status: 1,
       };
     },
-    add() {
-      reqUserAdd(this.user).then((res) => {
-        if (res.data.code == 200) {
-          //弹框
-          successalert(res.data.msg);
-          //弹框消失
-          this.cancel();
-          //清空数据
-          this.empty();
-          //刷新列表
-          this.$emit("init");
+    checkProps() {
+      return new Promise((resolve, reject) => {
+        if (this.user.roleid === "") {
+          erroralert("请选择所属角色");
+          return;
         }
+        if (this.user.username === "") {
+          erroralert("用户名不能为空");
+          return;
+        }
+        if (this.user.password === "") {
+          erroralert("密码不能为空");
+          return;
+        }
+        resolve();
+      });
+    },
+    add() {
+      this.checkProps().then(() => {
+        reqUserAdd(this.user).then((res) => {
+          if (res.data.code == 200) {
+            //弹框
+            successalert(res.data.msg);
+            //弹框消失
+            this.cancel();
+            //清空数据
+            this.empty();
+            //刷新列表
+            this.$emit("init");
+          }
+        });
       });
     },
     //获取弹框内编辑
@@ -99,23 +118,25 @@ export default {
           if (arr) {
             this.user.roleid = 0;
           }
-          this.user.password = ""
+          this.user.password = "";
         }
       });
     },
     //修改更新数据
     change() {
-      reqUserEdit(this.user).then((res) => {
-        if (res.data.code == 200) {
-          //弹框
-          successalert(res.data.msg);
-          //弹框消失
-          this.cancel();
-          //清空数据
-          this.empty();
-          //刷新列表
-          this.$emit("init");
-        }
+      this.checkProps().then(() => {
+        reqUserEdit(this.user).then((res) => {
+          if (res.data.code == 200) {
+            //弹框
+            successalert(res.data.msg);
+            //弹框消失
+            this.cancel();
+            //清空数据
+            this.empty();
+            //刷新列表
+            this.$emit("init");
+          }
+        });
       });
     },
   },

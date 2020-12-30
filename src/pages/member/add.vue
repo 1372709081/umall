@@ -57,21 +57,36 @@ export default {
         }
       });
     },
+    checkProps() {
+      return new Promise((resolve, reject) => {
+        if (this.user.nickname === "") {
+          erroralert("昵称不能为空");
+          return;
+        }
+        if (this.user.phone === "") {
+          erroralert("手机号不能为空");
+          return;
+        }
+        if (this.user.password === "") {
+          erroralert("密码不能为空");
+          return;
+        }
+        resolve();
+      });
+    },
     //更改数据
     change() {
-      if (!this.user.password) {
-        erroralert("密码不能为空");
-        return;
-      }
-      reqMemberEdit(this.user).then((res) => {
-        if (res.data.code == 200) {
-          //弹框
-          successalert(res.data.msg);
-          //弹框消失
-          this.info.isshow = false;
-          //刷新列表
-          this.$emit("init");
-        }
+      this.checkProps().then(() => {
+        reqMemberEdit(this.user).then((res) => {
+          if (res.data.code == 200) {
+            //弹框
+            successalert(res.data.msg);
+            //弹框消失
+            this.info.isshow = false;
+            //刷新列表
+            this.$emit("init");
+          }
+        });
       });
     },
   },

@@ -40,7 +40,7 @@
 
 <script>
 import { reqRoleAdd, reqRoleDetail, reqRoleEdit } from "../../../utils/http";
-import { successalert } from "../../../utils/alert";
+import { successalert, erroralert } from "../../../utils/alert";
 export default {
   props: ["info", "list"],
   data() {
@@ -74,22 +74,32 @@ export default {
       //清空选项
       this.$refs.tree.setCheckedKeys([]);
     },
+    checkProps() {
+      return new Promise((resolve, reject) => {
+        if (this.user.rolename === "") {
+          erroralert("角色名称不能为空");
+          return;
+        }
+      });
+    },
     //点击添加
     getCheckedKeys() {
-      //设置选项
-      let arr = this.$refs.tree.getCheckedKeys();
-      this.user.menus = JSON.stringify(arr);
-      reqRoleAdd(this.user).then((res) => {
-        if (res.data.code == 200) {
-          //弹框
-          successalert(res.data.msg);
-          //弹框消失
-          this.cancel();
-          //清空数据
-          this.empty();
-          //刷新列表
-          this.$emit("init");
-        }
+      this.checkProps().then(() => {
+        //设置选项
+        let arr = this.$refs.tree.getCheckedKeys();
+        this.user.menus = JSON.stringify(arr);
+        reqRoleAdd(this.user).then((res) => {
+          if (res.data.code == 200) {
+            //弹框
+            successalert(res.data.msg);
+            //弹框消失
+            this.cancel();
+            //清空数据
+            this.empty();
+            //刷新列表
+            this.$emit("init");
+          }
+        });
       });
     },
     //获取弹框内编辑
@@ -106,17 +116,19 @@ export default {
     },
     //更改数据
     change() {
-      reqRoleEdit(this.user).then((res) => {
-        if (res.data.code == 200) {
-          //弹框
-          successalert(res.data.msg);
-          //弹框消失
-          this.cancel();
-          //清空数据
-          this.empty();
-          //刷新列表
-          this.$emit("init");
-        }
+      this.checkProps().then(() => {
+        reqRoleEdit(this.user).then((res) => {
+          if (res.data.code == 200) {
+            //弹框
+            successalert(res.data.msg);
+            //弹框消失
+            this.cancel();
+            //清空数据
+            this.empty();
+            //刷新列表
+            this.$emit("init");
+          }
+        });
       });
     },
   },

@@ -203,6 +203,48 @@ export default {
       this.secondCateList = [];
       this.showSpecsAttr = [];
     },
+    //验证
+    checkProps() {
+      return new Promise((resolve, reject) => {
+        if (this.user.first_cateid === "") {
+          erroralert("一级分类不能为空");
+          return;
+        }
+        if (this.user.second_cateid === "") {
+          erroralert("二级分类不能为空");
+          return;
+        }
+        if (this.user.goodsname === "") {
+          erroralert("商品名称不能为空");
+          return;
+        }
+        if (this.user.price === "") {
+          erroralert("商品价格不能为空");
+          return;
+        }
+        if (this.user.market_price === "") {
+          erroralert("商品市场价格不能为空");
+          return;
+        }
+        if (!this.user.img) {
+          erroralert("请上传图片");
+          return;
+        }
+        if (this.user.specsid === "") {
+          erroralert("商品规格不能为空");
+          return;
+        }
+        if (this.user.specsattr.length === 0) {
+          erroralert("请选择规格属性");
+          return;
+        }
+        if (this.editor.txt.html() == "") {
+          erroralert("请输入商品描述");
+          return;
+        }
+        resolve();
+      });
+    },
     //添加
     add() {
       this.checkProps().then(() => {
@@ -269,38 +311,33 @@ export default {
     checkProps() {
       return new Promise((resolve, reject) => {
         if (this.user.first_cateid === "") {
-          erroralert("一级分类不能为空");
+          erroralert("请选择一级分类");
           return;
         }
-
         if (this.user.second_cateid === "") {
-          erroralert("二级分类不能为空");
+          erroralert("请选择二级分类");
           return;
         }
         if (this.user.goodsname === "") {
           erroralert("商品名称不能为空");
           return;
         }
-
         if (this.user.price === "") {
           erroralert("商品价格不能为空");
           return;
         }
-
         if (this.user.market_price === "") {
           erroralert("商品市场价格不能为空");
           return;
         }
-
         if (!this.user.img) {
           erroralert("请上传图片");
           return;
         }
         if (this.user.specsid === "") {
-          erroralert("商品规格不能为空");
+          erroralert("请选择商品规格");
           return;
         }
-
         if (this.user.specsattr.length === 0) {
           erroralert("请选择规格属性");
           return;

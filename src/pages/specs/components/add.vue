@@ -53,7 +53,7 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
 import { reqSpecsAdd, reqSpecsDetail, reqSpecsEdit } from "../../../utils/http";
-import { successalert } from "../../../utils/alert";
+import { successalert, erroralert } from "../../../utils/alert";
 export default {
   props: ["info"],
   data() {
@@ -76,9 +76,9 @@ export default {
     }),
     //取消
     cancel() {
-      //   if (!this.info.isshow) {
-      //     this.empty();
-      //   }
+      if (!this.info.isadd) {
+        this.empty();
+      }
       this.info.isshow = false;
     },
     //新增属性
@@ -98,22 +98,39 @@ export default {
       };
       this.attrsArr = [{ value: "" }];
     },
+    checkProps() {
+      return new Promise((resolve, reject) => {
+        if (this.user.specsname === "") {
+          erroralert("规格名称不能为空");
+          return;
+        }
+        if (this.attrsArr.some((item) => item.value === "")) {
+          erroralert("请输入所有的规格属性");
+          return;
+        }
+        resolve();
+      });
+    },
     //添加
     add() {
-      this.user.attrs = JSON.stringify(this.attrsArr.map((item) => item.value));
-      //发请求
-      reqSpecsAdd(this.user).then((res) => {
-        if (res.data.code == 200) {
-          //弹框消失
-          this.cancel();
-          //数据清空
-          this.empty();
-          //成功
-          successalert(res.data.msg);
-          //刷新list
-          this.reqList();
-          this.reqTotal();
-        }
+      this.checkProps().then(() => {
+        this.user.attrs = JSON.stringify(
+          this.attrsArr.map((item) => item.value)
+        );
+        //发请求
+        reqSpecsAdd(this.user).then((res) => {
+          if (res.data.code == 200) {
+            //弹框消失
+            this.cancel();
+            //数据清空
+            this.empty();
+            //成功
+            successalert(res.data.msg);
+            //刷新list
+            this.reqList();
+            this.reqTotal();
+          }
+        });
       });
     },
     //获取一条数据
@@ -128,18 +145,22 @@ export default {
     },
     //修改
     update() {
-      this.user.attrs = JSON.stringify(this.attrsArr.map((item) => item.value));
-      reqSpecsEdit(this.user).then((res) => {
-        if (res.data.code == 200) {
-          //弹框消失
-          this.cancel();
-          //数据清空
-          this.empty();
-          //弹成功
-          successalert(res.data.msg);
-          //刷新list
-          this.reqList();
-        }
+      this.checkProps().then(() => {
+        this.user.attrs = JSON.stringify(
+          this.attrsArr.map((item) => item.value)
+        );
+        reqSpecsEdit(this.user).then((res) => {
+          if (res.data.code == 200) {
+            //弹框消失
+            this.cancel();
+            //数据清空
+            this.empty();
+            //弹成功
+            successalert(res.data.msg);
+            //刷新list
+            this.reqList();
+          }
+        });
       });
     },
   },

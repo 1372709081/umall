@@ -70,7 +70,7 @@
 //引入路由集合
 import { indexRoutes } from "../../../router";
 import { reqMenuAdd, reqMenuDetail, reqMenuEdit } from "../../../utils/http";
-import { successalert } from "../../../utils/alert";
+import { successalert, erroralert } from "../../../utils/alert";
 export default {
   props: ["info", "list"],
   data() {
@@ -115,18 +115,30 @@ export default {
         status: 1,
       };
     },
-    add() {
-      reqMenuAdd(this.user).then((res) => {
-        if (res.data.code == 200) {
-          //弹框
-          successalert(res.data.msg);
-          //弹框消失
-          this.cancel();
-          //清空数据
-          this.empty();
-          //刷新列表
-          this.$emit("init");
+    //验证
+    checkProps() {
+      return new Promise((resolve, reject) => {
+        if (this.user.title === "") {
+          erroralert("菜单名称不能为空");
+          return;
         }
+        resolve();
+      });
+    },
+    add() {
+      this.checkProps().then(() => {
+        reqMenuAdd(this.user).then((res) => {
+          if (res.data.code == 200) {
+            //弹框
+            successalert(res.data.msg);
+            //弹框消失
+            this.cancel();
+            //清空数据
+            this.empty();
+            //刷新列表
+            this.$emit("init");
+          }
+        });
       });
     },
     Change() {
@@ -141,17 +153,19 @@ export default {
       });
     },
     updata() {
-      reqMenuEdit(this.user).then((res) => {
-        if (res.data.code == 200) {
-          //弹框
-          successalert(res.data.msg);
-          //弹框消失
-          this.cancel();
-          //清空数据
-          this.empty();
-          //刷新列表
-          this.$emit("init");
-        }
+      this.checkProps().then(() => {
+        reqMenuEdit(this.user).then((res) => {
+          if (res.data.code == 200) {
+            //弹框
+            successalert(res.data.msg);
+            //弹框消失
+            this.cancel();
+            //清空数据
+            this.empty();
+            //刷新列表
+            this.$emit("init");
+          }
+        });
       });
     },
   },

@@ -36,8 +36,12 @@
 </template>
 
 <script>
-import { reqBannerAdd,reqBannerDetail,reqBannerEdit } from "../../../utils/http";
-import { successalert } from "../../../utils/alert";
+import {
+  reqBannerAdd,
+  reqBannerDetail,
+  reqBannerEdit,
+} from "../../../utils/http";
+import { successalert, erroralert } from "../../../utils/alert";
 import path from "path";
 export default {
   props: ["info"],
@@ -85,19 +89,34 @@ export default {
       //赋值
       this.imgs.img = file;
     },
+    checkProps() {
+      return new Promise((resolve, reject) => {
+        if (this.imgs.title === "") {
+          erroralert("标题不能为空");
+          return;
+        }
+        if (this.imgs.img === null) {
+          erroralert("请添加图片");
+          return;
+        }
+        resolve();
+      });
+    },
     //点击添加
     add() {
-      reqBannerAdd(this.imgs).then((res) => {
-        if (res.data.code == 200) {
-          //弹框
-          successalert(res.data.msg);
-          //弹框消失
-          this.cancel();
-          //清空数据
-          this.empty();
-          //刷新列表
-          this.$emit("init");
-        }
+      this.checkProps().then(() => {
+        reqBannerAdd(this.imgs).then((res) => {
+          if (res.data.code == 200) {
+            //弹框
+            successalert(res.data.msg);
+            //弹框消失
+            this.cancel();
+            //清空数据
+            this.empty();
+            //刷新列表
+            this.$emit("init");
+          }
+        });
       });
     },
     get(id) {
@@ -113,17 +132,19 @@ export default {
     },
     //更改数据
     change() {
-      reqBannerEdit(this.imgs).then((res) => {
-        if (res.data.code == 200) {
-          //弹框
-          successalert(res.data.msg);
-          //弹框消失
-          this.cancel();
-          //清空数据
-          this.empty();
-          //刷新列表
-          this.$emit("init");
-        }
+      this.checkProps().then(() => {
+        reqBannerEdit(this.imgs).then((res) => {
+          if (res.data.code == 200) {
+            //弹框
+            successalert(res.data.msg);
+            //弹框消失
+            this.cancel();
+            //清空数据
+            this.empty();
+            //刷新列表
+            this.$emit("init");
+          }
+        });
       });
     },
   },

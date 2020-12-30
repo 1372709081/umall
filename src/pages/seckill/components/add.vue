@@ -161,17 +161,40 @@ export default {
       };
       this.time = [];
     },
+    checkProps() {
+      return new Promise((resolve, reject) => {
+        if (this.user.roleid === "") {
+          erroralert("活动名称不能为空");
+          return;
+        }
+        if (this.user.first_cateid === "") {
+          erroralert("请选择一级分类");
+          return;
+        }
+        if (this.user.second_cateid === "") {
+          erroralert("请选择二级分类");
+          return;
+        }
+        if (this.user.goodsid === "") {
+          erroralert("请选择商品");
+          return;
+        }
+        resolve();
+      });
+    },
     //添加
     add() {
-      this.user.begintime = new Date(this.time[0]).getTime();
-      this.user.endtime = new Date(this.time[1]).getTime();
-      reqSeckAdd(this.user).then((res) => {
-        if (res.data.code == 200) {
-          this.empty();
-          this.cancel();
-          successalert(res.data.msg);
-          this.reqList();
-        }
+      this.checkProps().then(() => {
+        this.user.begintime = new Date(this.time[0]).getTime();
+        this.user.endtime = new Date(this.time[1]).getTime();
+        reqSeckAdd(this.user).then((res) => {
+          if (res.data.code == 200) {
+            this.empty();
+            this.cancel();
+            successalert(res.data.msg);
+            this.reqList();
+          }
+        });
       });
     },
     //获取详情
