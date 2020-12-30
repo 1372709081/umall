@@ -118,6 +118,12 @@ export default {
           erroralert("分类名称不能为空");
           return;
         }
+        if (this.user.pid !== 0) {
+          if (this.imgUrl === "") {
+            erroralert("请添加图片");
+            return;
+          }
+        }
         resolve();
       });
     },

@@ -122,6 +122,18 @@ export default {
           erroralert("菜单名称不能为空");
           return;
         }
+        if (this.user.pid === 0) {
+          if (this.user.icon === "") {
+            erroralert("请选择菜单图标");
+            return;
+          }
+        }
+        if (this.user.pid !== 0) {
+          if (this.user.url === "") {
+            erroralert("请选择菜单地址");
+            return;
+          }
+        }
         resolve();
       });
     },

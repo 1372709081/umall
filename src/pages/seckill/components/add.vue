@@ -163,8 +163,12 @@ export default {
     },
     checkProps() {
       return new Promise((resolve, reject) => {
-        if (this.user.roleid === "") {
+        if (this.user.title === "") {
           erroralert("活动名称不能为空");
+          return;
+        }
+        if (this.time.length < 1) {
+          erroralert("请选择活动期限");
           return;
         }
         if (this.user.first_cateid === "") {
@@ -213,7 +217,7 @@ export default {
     //修改
     update() {
       this.checkProps().then(() => {
-        reqgoodsUpdate(data).then((res) => {
+        reqSeckList(this.user).then((res) => {
           if (res.data.code == 200) {
             //1.弹框消失
             this.cancel();
