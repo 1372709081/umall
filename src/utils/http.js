@@ -2,10 +2,19 @@ import axios from "axios"
 import qs from "qs"
 import Vue from "vue"
 import { erroralert } from "./alert"
-
+import store from "../store"
+import router from "../router"
 
 let baseUrl = "/api"
 Vue.prototype.$pre = "http://localhost:3000"
+
+//请求拦截
+axios.interceptors.request.use(config=>{
+    if(config.url!==baseUrl+"/api/userlogin"){
+        config.headers.authorization=store.state.userInfo.token
+    }
+    return config
+})
 
 //相应拦截
 axios.interceptors.response.use(res => {
@@ -184,6 +193,16 @@ export const reqUserEdit = (user) => {
         data: qs.stringify(user)
     })
 }
+
+//登录
+export let reqLogin = (user) => {
+    return axios({
+        url: baseUrl + "/api/userlogin",
+        method: "post",
+        data: qs.stringify(user)
+    })
+}
+
 
 
 /* ********************商城管理************************* */
