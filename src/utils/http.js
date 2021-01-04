@@ -16,7 +16,7 @@ axios.interceptors.request.use(config=>{
     return config
 })
 
-//相应拦截
+//响应拦截
 axios.interceptors.response.use(res => {
     //处理失败
     if (res.data.code !== 200) {

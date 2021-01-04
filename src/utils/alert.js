@@ -1,6 +1,5 @@
 import Vue from "vue"
 let vm=new Vue()
-import {reqMenuDel} from "../utils/http"
 
 //成功
 export let successalert = msg => {
